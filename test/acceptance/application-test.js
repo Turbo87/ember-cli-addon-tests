@@ -54,4 +54,17 @@ describe('Acceptance | application', function() {
       });
     });
   });
+
+  describe('runEmberCommand', function () {
+    it('works', function() {
+      return app.runEmberCommand('--version').then(function (result) {
+        expect(result).to.have.property('code', 0);
+        expect(result).to.have.property('signal', null);
+        expect(result.errors).to.be.an('array');
+        expect(result.errors).to.deep.equal([]);
+        expect(result.output).to.be.an('array');
+        expect(result.output.join('')).to.contain('version: 1.13');
+      });
+    });
+  });
 });

@@ -18,21 +18,40 @@ describe('Acceptance | application', function() {
 
     return app.create('dummy', {
       fixturesPath: 'test/fixtures/my-addon/tests'
-    }).then(function() {
-      return app.startServer();
     });
   });
 
   after(function() {
     process.chdir(previousCwd);
-
-    return app.stopServer();
   });
 
-  it('works', function() {
-    return request('http://localhost:49741/assets/dummy.js')
-      .then(function(response) {
-        expect(response.body).to.contain('The dummy app is rendering correctly');
+  describe('startServer/stopServer', function() {
+    before(function() {
+      return app.startServer();
+    });
+
+    after(function() {
+      return app.stopServer();
+    });
+
+    it('works', function() {
+      return request('http://localhost:49741/assets/dummy.js')
+        .then(function(response) {
+          expect(response.body).to.contain('The dummy app is rendering correctly');
+        });
+    });
+  });
+
+  describe('run', function () {
+    it('works', function() {
+      return app.run('ember', '--version').then(function (result) {
+        expect(result).to.have.property('code', 0);
+        expect(result).to.have.property('signal', null);
+        expect(result.errors).to.be.an('array');
+        expect(result.errors).to.deep.equal([]);
+        expect(result.output).to.be.an('array');
+        expect(result.output.join('')).to.contain('version: 1.13');
       });
+    });
   });
 });
